@@ -1,0 +1,347 @@
+.swap-view{
+  width: 89%;
+  max-width: 500px;
+  margin: auto;
+
+  .swap-card{
+    position: relative;
+    z-index: 2;
+    
+    @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+      background: rgba(36, 39, 41, 0.1);
+      backdrop-filter: blur(40px);
+    }
+  
+    /* slightly transparent fallback for Firefox (not supporting backdrop-filter) */
+    @supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+      background: #181B1C;
+    }
+
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+
+    .swap-card-grid{
+      margin: 0;
+      width: 100%;
+    }
+
+    .swap-card-header{
+      .swap-card-header-title{
+        font-family: Montserrat Bold;
+        font-weight: bold;
+        font-size: 30px;
+        color: #FFFFFF;
+        margin-bottom: 4px;
+        text-align: center;
+      }
+    }
+
+    .swap-card-metrics {
+      display: flex;
+      width: 100%;
+      padding: 0;
+      text-align: center;
+      margin-top: 10px;
+      
+      .swap-card-apy,
+      .swap-card-tvl,
+      .swap-card-index {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
+        .swap-card-metrics-title{
+          font-family: Montserrat Medium;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 20px;
+          color: rgba(255, 255, 255, 0.6);
+          margin-bottom: 2px;
+        }
+        
+        .swap-card-metrics-value{
+          font-family: Montserrat Bold;
+          font-style: normal;
+          font-weight: bold;
+          font-size: 24px;
+          line-height: 29px;
+          color: #FFFFFF;
+        }
+      }
+    }
+
+    .swap-card-area {
+      .swap-card-wallet-notification{
+        text-align: center;
+
+        .swap-card-wallet-connect-btn{
+          background: rgba(255, 255, 255, 0.2);
+          box-shadow: 0px 0px 10px rgba(44, 39, 109, 0.1);
+          border-radius: 10px;
+          padding: 14px 58px;
+          cursor: pointer;
+          margin: auto;
+          margin-top: 20px;
+        
+          p{
+            font-family: Montserrat SemiBold;
+            font-weight: 600;
+            font-size: 18px;
+            color: #FFFFFF;
+          }
+        }
+
+        .swap-card-ex-btn{
+          background: rgba(255, 255, 255, 0.2);
+          box-shadow: 0px 0px 10px rgba(44, 39, 109, 0.1);
+          border-radius: 10px;
+          padding: 10px 58px;
+          cursor: pointer;
+          margin: auto;
+          margin-top: 20px;
+        
+          p{
+            font-family: Montserrat SemiBold;
+            font-weight: 600;
+            font-size: 18px;
+            color: #FFFFFF;
+          }
+        }
+
+        .swap-card-wallet-desc-text{
+          font-family: Montserrat Light;
+          font-weight: 300;
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.6);
+          margin-top: 10px;
+          margin-bottom: 6px;
+        }
+      }
+
+      .swap-card-action-area{
+        width: 100%;
+        margin-top: 25px;
+
+        .swap-card-text-balance{
+          display: flex;
+          justify-content: space-between;
+          
+          p{
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+          }
+        }
+        
+
+        .swap-card-action-stage-btns-wrap{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .swap-card-action-stage-btn{
+            margin: 0px 30px;
+            padding: 6px;
+            cursor: pointer;
+            transition: all .4s ease;
+            
+            p{
+              font-family: Montserrat SemiBold;
+              font-style: normal;
+              font-weight: 600;
+              font-size: 18px;
+              color: rgba(255, 255, 255, 0.6);
+            }
+          }
+
+          .swap-card-action-stage-btn.active{
+
+            p{
+              color: #FFFFFF;
+            }
+
+            border-bottom: 1px solid #FFFFFF;;
+          }
+        }
+
+        .swap-card-action-row{
+          display: flex;
+          align-items: center;
+          margin-top: 10px;
+
+          .swap-card-action-input{
+            width: 100%;
+
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            outline: none;
+            padding-left: 0px;
+            
+            .MuiOutlinedInput-input{
+              font-family: Montserrat Medium;
+              font-style: normal;
+              font-weight: 500;
+              font-size: 16px;
+              color: rgba(255, 255, 255, 0.6);
+              padding: 14px 20px;
+            }
+            
+            .MuiOutlinedInput-notchedOutline{
+              border-color: rgba(255, 255, 255, 0.2) !important;
+            }
+            
+            .swap-card-action-input-btn{
+              cursor: pointer;
+                
+              p{
+                font-family: Montserrat SemiBold;
+                font-weight: 600;
+                font-size: 18px;
+                color: #FFFFFF;
+              }
+            }
+            .swap-card-action-coin-btn{
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              border-right: solid rgba(255, 255, 255, 0.2);
+              padding: 3px 15px 3px 3px;
+              .swap-card-action-coin-img{
+                margin-right: 10px;
+              }
+              p{
+                font-family: Montserrat SemiBold;
+                font-weight: 600;
+                font-size: 18px;
+                color: #FFFFFF;
+              }
+            }
+          } 
+          
+          .swap-card-tab-panel{
+            min-width: 215px;
+            margin-left: 10px;
+
+            .swap-card-tab-panel-btn{
+              background: rgba(255, 255, 255, 0.2);
+              box-shadow: 0px 0px 10px rgba(44, 39, 109, 0.1);
+              border-radius: 10px;
+              padding: 14px 0px;
+              cursor: pointer;
+              text-align: center;
+          
+              p{
+                font-family: Montserrat SemiBold;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 18px;
+                color: #FFFFFF;
+              }
+            }
+          }
+        }
+
+        .swap-card-action-help-text{
+          margin-top: 10px;
+          
+          p{
+            font-family: Montserrat Light;
+            font-style: normal;
+            font-weight: 300;
+            font-size: 14px;
+            line-height: 17px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+          }
+        }
+      }
+
+      .swap-user-data{
+        justify-content: center;
+        margin: auto;
+        padding: 0 5px;
+        margin-top: 30px;
+        
+        
+      }
+
+      .swap-trad-info{
+        padding-top: 15px;
+        div {
+          display: flex;
+          justify-content: space-between;
+          p{
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+          }
+        }
+      }
+    }
+  }
+}
+
+.data-row{
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0px;
+
+  .data-row-name{
+    font-family: Montserrat Medium;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    color: #FFFFFF;
+  }
+  .data-row-value{
+    font-family: Montserrat;
+    font-size: 14px;
+    line-height: 17px;
+    color: #FFFFFF;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .swap-view{
+    .swap-card{
+      .swap-card-metrics{
+        .swap-card-apy,
+        .swap-card-tvl,
+        .swap-card-index {
+          align-items: flex-start;
+        }
+
+        .swap-card {
+          width: 50%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+      }
+
+      .swap-card-area{
+        .swap-card-action-area{
+          .swap-card-action-row{
+            flex-direction: column;
+            .swap-card-tab-panel{
+              margin-left: 0;
+              margin-top: 20px;
+              min-width: none;
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1240px) {
+  .swap-view{
+    width: 100%;
+  }
+}
