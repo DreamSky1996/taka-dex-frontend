@@ -43,7 +43,7 @@ function NavContent() {
     return (
         <div className="dapp-sidebar">
             <div className="branding-header">
-                <Link href="https://appkandyland.on.fleek.co/" target="_blank">
+                <Link href="https://taka-dex.on.fleek.co/" target="_blank">
                     <img alt="" src={TakaIcon}  style={style}/>
                 </Link>
 
