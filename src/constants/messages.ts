@@ -12,6 +12,7 @@ export const messages = {
     nothing_to_claim: "You have nothing to claim",
     something_wrong: "Something went wrong",
     switch_to_avalanche: "Switch to the Avalanche network?",
+    switch_to_binance_test: "Switch to the Binance Test network?",
     slippage_too_small: "Slippage too small",
     slippage_too_big: "Slippage too big",
     your_balance_update_soon: "Your balance will update soon",
