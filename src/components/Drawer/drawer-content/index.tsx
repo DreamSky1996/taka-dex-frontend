@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import Social from "./social";
 import StakeIcon from "../../../assets/icons/stake.svg";
 import BondIcon from "../../../assets/icons/bond.svg";
-import kandylandIcon from "../../../assets/icons/kandyland.png";
+import TakaIcon from "../../../assets/icons/taka.png";
 import DashboardIcon from "../../../assets/icons/dashboard.svg";
 import { trim, shorten } from "../../../helpers";
 import { useAddress } from "../../../hooks";
@@ -44,7 +44,7 @@ function NavContent() {
         <div className="dapp-sidebar">
             <div className="branding-header">
                 <Link href="https://appkandyland.on.fleek.co/" target="_blank">
-                    <img alt="" src={kandylandIcon}  style={style}/>
+                    <img alt="" src={TakaIcon}  style={style}/>
                 </Link>
 
                 {address && (
