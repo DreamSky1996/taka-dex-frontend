@@ -97,6 +97,10 @@ function Swap() {
     }
 
     const onhandleCheckPrice = async () => {
+        if(Number(amountIn) == 0) {
+            dispatch(info({ text: "Please Input Amount" }));
+            return;
+        } 
         if(amountIn && !priceCheckLoading) {
             if(tokenIN.address == tokenOut.address) {
                 dispatch(info({ text: "Same Tokens" }));
