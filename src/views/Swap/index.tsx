@@ -77,11 +77,11 @@ function Swap() {
         }
     }, [tokenOut, connected]);
 
-    useEffect(() => {
-        if(Number(amountIn) > 0) {
-            onhandleCheckPrice();
-        }
-    }, [amountIn]);
+    // useEffect(() => {
+    //     if(Number(amountIn) > 0) {
+    //         onhandleCheckPrice();
+    //     }
+    // }, [amountIn]);
 
     const setMax = () => {
         setAmountIn(tokenINBalance);
@@ -359,14 +359,14 @@ function Swap() {
                                 )
                             }
                             <div className="swap-card-wallet-notification">
-                                {/* <div className="swap-card-wallet-connect-btn" onClick={onhandleCheckPrice}>
+                                <div className="swap-card-wallet-connect-btn" onClick={onhandleCheckPrice}>
                                    {!priceCheckLoading && (
                                        <p>{priceChecked? "Refresh Prices": "Check Prices"}</p>
                                     )}
                                     {priceCheckLoading && (
                                        <p>loading ... </p>
                                     )} 
-                                </div> */}
+                                </div>
                                 {!address && (
                                     <div className="swap-card-wallet-connect-btn" onClick={connect}>
                                         <p>Connect Wallet</p>
