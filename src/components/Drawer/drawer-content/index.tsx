@@ -35,6 +35,9 @@ function NavContent() {
         if (currentPath.indexOf("calculator") >= 0 && page === "calculator") {
             return true;
         }
+        if (currentPath.indexOf("swap") >= 0 && page === "swap") {
+            return true;
+        }
         return false;
     }, []);
 
@@ -135,7 +138,7 @@ function NavContent() {
                         component={NavLink}
                         to="/swap"
                         isActive={(match: any, location: any) => {
-                            return checkPage(location, "calculator");
+                            return checkPage(location, "swap");
                         }}
                         className={classnames("button-dapp-menu", { active: isActive })}
                     >
