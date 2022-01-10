@@ -24,6 +24,7 @@ function Swap() {
     const { provider, address, connect, chainID, checkWrongNetwork, connected } = useWeb3Context();
 
     const [amountIn, setAmountIn] = useState<string>();
+    const [hasGasfee, setHasGasfee] = useState<boolean>(false);
     const [tokenIN, setTokenIn] = useState<IToken>(tokens[2]);
     const [tokenINBalance, setTokenInBalance] = useState<string>();
 
@@ -45,42 +46,38 @@ function Swap() {
     const [path, setPath] = useState<string[]>([]);
 
     const update = async () => {
-        getTokenBalance(tokenIN.address, address, provider)
-            .then((balance) => {
-                setTokenInBalance(balance);
-            });
-        getTokenBalance(tokenOut.address, address, provider)
-            .then((balance) => {
-                setTokenOutBalance(balance);
-            });
-    }
+        getTokenBalance(tokenIN.address, address, provider).then(balance => {
+            setTokenInBalance(balance);
+        });
+        getTokenBalance(tokenOut.address, address, provider).then(balance => {
+            setTokenOutBalance(balance);
+        });
+    };
 
     useEffect(() => {
-        if(connected) {
-            getTokenBalance(tokenIN.address, address, provider)
-            .then((balance) => {
+        if (connected) {
+            getTokenBalance(tokenIN.address, address, provider).then(balance => {
                 setTokenInBalance(balance);
             });
-            routerHasTokenAllowance(tokenIN.address, address, provider)
-            .then((allowance) => {
+            getTokenBalance("0x0000000000000000000000000000000000000000", address, provider).then(balance => {
+                setHasGasfee(Number(balance) > 0);
+            });
+            routerHasTokenAllowance(tokenIN.address, address, provider).then(allowance => {
                 setTokenApprove(allowance);
             });
         }
-
     }, [tokenIN, connected]);
 
     useEffect(() => {
-        if(connected) {
-            getTokenBalance(tokenOut.address, address, provider)
-            .then((balance) => {
+        if (connected) {
+            getTokenBalance(tokenOut.address, address, provider).then(balance => {
                 setTokenOutBalance(balance);
             });
         }
     }, [tokenOut, connected]);
 
     useEffect(() => {
-        if(Number(amountIn) > 0) {
-            
+        if (Number(amountIn) > 0) {
             onhandleCheckPrice();
         }
     }, [amountIn]);
@@ -90,28 +87,28 @@ function Swap() {
         setPriceChecked(false);
     };
 
-    const findBestPath = async (_amountIn : string, _tokenInAddress: string, _tokenOutAddress: string, _maxSteps: number ) => {
+    const findBestPath = async (_amountIn: string, _tokenInAddress: string, _tokenOutAddress: string, _maxSteps: number) => {
         const addresses = getDEXAddress(chainID);
         const amountInFormatted = ethers.utils.parseEther(_amountIn);
         const takaRouterContract = new ethers.Contract(addresses.TAKAROUTER_ADDRESS, TakaRouterContract, provider);
         const formattedOffer = await takaRouterContract.findBestPath(amountInFormatted, _tokenInAddress, _tokenOutAddress, _maxSteps);
         return formattedOffer;
-    }
+    };
 
     const onhandleCheckPrice = async () => {
-        if(Number(amountIn) == 0) {
+        if (Number(amountIn) == 0) {
             dispatch(info({ text: "Please Input Amount" }));
             return;
         }
         // if(amountIn && !priceCheckLoading) {
-        if(amountIn) {
+        if (amountIn) {
             console.log(Number(amountIn));
-            if(tokenIN.address == tokenOut.address) {
+            if (tokenIN.address == tokenOut.address) {
                 dispatch(info({ text: "Same Tokens" }));
                 return;
             }
             setPriceCheckedLoading(true);
-            
+
             let tokenInAddress = tokenIN.address;
             if (tokenInAddress == "0x0000000000000000000000000000000000000000") {
                 tokenInAddress = "0xae13d989dac2f0debff460ac112a837c89baa7cd";
@@ -129,8 +126,8 @@ function Swap() {
             setAmountOut(tokenOutAmount);
             setPriceChecked(true);
             setPriceCheckedLoading(false);
-        } 
-    }
+        }
+    };
 
     const onhandleExchangeToken = () => {
         const _token = tokenIN;
@@ -139,7 +136,7 @@ function Swap() {
         setAmountOut("");
         setAmountIn("");
         setPriceChecked(false);
-    }
+    };
 
     const getRouteSTR = () => {
         let ret = "";
@@ -147,16 +144,16 @@ function Swap() {
             const item = path[index];
             const itemSymbol = getTokenSymbol(item);
             if (index == path.length - 1) {
-                ret = ret + itemSymbol;                
+                ret = ret + itemSymbol;
             } else {
                 ret = ret + itemSymbol + " > ";
             }
         }
         return ret;
-    }
+    };
 
     const onhandleSwap = async () => {
-        if(!priceChecked) {
+        if (!priceChecked) {
             dispatch(info({ text: "Please Check Price" }));
             return;
         }
@@ -164,32 +161,31 @@ function Swap() {
         const signer = provider.getSigner();
         const addresses = getDEXAddress(chainID);
         const takaRouterContract = new ethers.Contract(addresses.TAKAROUTER_ADDRESS, TakaRouterContract, signer);
-        const _amountOut = Number(amountOut) * 99.8 / 100;
+        const _amountOut = (Number(amountOut) * 99.8) / 100;
         let swapTx;
         try {
             const gasPrice = await getGasPrice(provider);
             interface ITrade {
-                amountIn : BigNumber;
+                amountIn: BigNumber;
                 amountOut: BigNumber;
                 path: string[];
-                adapters : string[];
+                adapters: string[];
             }
-            
+
             const mimAmountOut = ethers.utils.parseEther(_amountOut.toString());
-            const trade : ITrade = { amountIn :amounts[0], amountOut : mimAmountOut, path: path, adapters: adapters };
+            const trade: ITrade = { amountIn: amounts[0], amountOut: mimAmountOut, path: path, adapters: adapters };
             if (tokenIN.address == "0x0000000000000000000000000000000000000000") {
-                swapTx = await takaRouterContract.swapNoSplitFromAVAX(trade , address, 0, {value: trade.amountIn ,gasPrice});    
+                swapTx = await takaRouterContract.swapNoSplitFromAVAX(trade, address, 0, { value: trade.amountIn, gasPrice });
             } else if (tokenOut.address == "0x0000000000000000000000000000000000000000") {
-                swapTx = await takaRouterContract.swapNoSplitToAVAX(trade , address, 0, {gasPrice});
+                swapTx = await takaRouterContract.swapNoSplitToAVAX(trade, address, 0, { gasPrice });
             } else {
-                swapTx = await takaRouterContract.swapNoSplit(trade , address, 0, {gasPrice});
+                swapTx = await takaRouterContract.swapNoSplit(trade, address, 0, { gasPrice });
             }
-            
+
             const pendingTxnType = "swapping";
             dispatch(fetchPendingTxns({ txnHash: swapTx.hash, text: "swapping", type: pendingTxnType }));
             await swapTx.wait();
             dispatch(success({ text: messages.tx_successfully_send }));
-
         } catch (error: any) {
             setSwapping(false);
             return metamaskErrorWrap(error, dispatch);
@@ -206,19 +202,19 @@ function Swap() {
         setAmountIn("");
         setPriceChecked(false);
         dispatch(info({ text: messages.your_balance_updated }));
-    }
+    };
 
-    const onhandleApprove =async () => {
+    const onhandleApprove = async () => {
         setApproving(true);
         const signer = provider.getSigner();
         const addresses = getDEXAddress(chainID);
         let approveTx;
-        const data = "0x095ea7b3" + addresses.TAKAROUTER_ADDRESS.slice(2).padStart(64, '0') + ethers.constants.MaxUint256.toHexString().slice(2).padStart(64, '0');
+        const data = "0x095ea7b3" + addresses.TAKAROUTER_ADDRESS.slice(2).padStart(64, "0") + ethers.constants.MaxUint256.toHexString().slice(2).padStart(64, "0");
         try {
             const gasPrice = await getGasPrice(provider);
             approveTx = await signer.sendTransaction({
-                to: tokenIN.address, 
-                data: data
+                to: tokenIN.address,
+                data: data,
             });
             const pendingTxnType = "approving";
             dispatch(fetchPendingTxns({ txnHash: approveTx.hash, text: "approving", type: pendingTxnType }));
@@ -235,17 +231,17 @@ function Swap() {
             }
         }
         setApproving(false);
-    }
+    };
 
     const onhandleClickOpenDialog = (isIn: boolean) => {
         setSelectTokenIn(isIn);
         setTokenDialogOpen(true);
-    }
+    };
 
-    const onhandleDialogClose = (value: IToken|null) => {
+    const onhandleDialogClose = (value: IToken | null) => {
         setTokenDialogOpen(false);
         if (value) {
-            if(selectTokenIn) {
+            if (selectTokenIn) {
                 setTokenIn(value);
             } else {
                 setTokenOut(value);
@@ -260,10 +256,7 @@ function Swap() {
         setAmountIn(e.target.value);
         setPriceChecked(false);
         setAmountOut("");
-    }
-
-
-    
+    };
 
     return (
         <div className="swap-view">
@@ -281,8 +274,10 @@ function Swap() {
                             <div className="swap-card-action-area">
                                 <div className="swap-card-text-balance">
                                     <p>SEND</p>
-                                    { address && (
-                                        tokenINBalance && <p>{trim(Number(tokenINBalance), 4)} {tokenIN.symbol}</p>
+                                    {address && tokenINBalance && (
+                                        <p>
+                                            {trim(Number(tokenINBalance), 4)} {tokenIN.symbol}
+                                        </p>
                                     )}
                                 </div>
                                 <div className="swap-card-action-row">
@@ -291,12 +286,12 @@ function Swap() {
                                         placeholder="Amount"
                                         className="swap-card-action-input"
                                         value={amountIn}
-                                        onChange={(e) => onhandleChangeTokenMount(e)}
+                                        onChange={e => onhandleChangeTokenMount(e)}
                                         labelWidth={0}
                                         startAdornment={
                                             <InputAdornment position="end">
                                                 <div className="swap-card-action-coin-btn" onClick={() => onhandleClickOpenDialog(true)}>
-                                                    <Avatar className="swap-card-action-coin-img" src={tokenIN.logoURI}/>
+                                                    <Avatar className="swap-card-action-coin-img" src={tokenIN.logoURI} />
                                                     <p>{tokenIN.symbol}</p>
                                                 </div>
                                             </InputAdornment>
@@ -313,14 +308,18 @@ function Swap() {
                             </div>
                             <div className="swap-card-wallet-notification">
                                 <div className="swap-card-ex-btn" onClick={onhandleExchangeToken}>
-                                    <p><SwapVertIcon/></p>
+                                    <p>
+                                        <SwapVertIcon />
+                                    </p>
                                 </div>
                             </div>
                             <div className="swap-card-action-area">
                                 <div className="swap-card-text-balance">
                                     <p>RECEIVE</p>
-                                    {address && (
-                                       tokenOutBalance && <p>{trim(Number(tokenOutBalance), 4)} {tokenOut.symbol}</p>
+                                    {address && tokenOutBalance && (
+                                        <p>
+                                            {trim(Number(tokenOutBalance), 4)} {tokenOut.symbol}
+                                        </p>
                                     )}
                                 </div>
                                 <div className="swap-card-action-row">
@@ -334,7 +333,7 @@ function Swap() {
                                         startAdornment={
                                             <InputAdornment position="end">
                                                 <div className="swap-card-action-coin-btn" onClick={() => onhandleClickOpenDialog(false)}>
-                                                    <Avatar className="swap-card-action-coin-img" src={tokenOut.logoURI}/>
+                                                    <Avatar className="swap-card-action-coin-img" src={tokenOut.logoURI} />
                                                     <p>{tokenOut.symbol}</p>
                                                 </div>
                                             </InputAdornment>
@@ -343,29 +342,30 @@ function Swap() {
                                     />
                                 </div>
                             </div>
-                            {
-                                priceChecked && (
-                                    <div className="swap-trad-info">
-                                        <div className="">
-                                            <p>Price</p>
-                                            <p>{trim(Number(amountIn)/Number(amountOut), 6)} {tokenIN.symbol}/{tokenOut.symbol}</p>
-                                        </div>
-                                        <div className="">
-                                            <p>Allowed Slippage</p>
-                                            <p>0.20%</p>
-                                        </div>
-                                        <div className="">
-                                            <p>Min. to Receive</p>
-                                            <p>{trim(Number(amountOut) * 99.8 / 100,6)} {tokenOut.symbol}</p>
-                                        </div>
-                                        <div className="">
-                                            <p>Path</p>
-                                            <p>{getRouteSTR()}</p>
-                                        </div>
-
+                            {priceChecked && (
+                                <div className="swap-trad-info">
+                                    <div className="">
+                                        <p>Price</p>
+                                        <p>
+                                            {trim(Number(amountIn) / Number(amountOut), 6)} {tokenIN.symbol}/{tokenOut.symbol}
+                                        </p>
                                     </div>
-                                )
-                            }
+                                    <div className="">
+                                        <p>Allowed Slippage</p>
+                                        <p>0.20%</p>
+                                    </div>
+                                    <div className="">
+                                        <p>Min. to Receive</p>
+                                        <p>
+                                            {trim((Number(amountOut) * 99.8) / 100, 6)} {tokenOut.symbol}
+                                        </p>
+                                    </div>
+                                    <div className="">
+                                        <p>Path</p>
+                                        <p>{getRouteSTR()}</p>
+                                    </div>
+                                </div>
+                            )}
                             <div className="swap-card-wallet-notification">
                                 {/* <div className="swap-card-wallet-connect-btn" onClick={onhandleCheckPrice}>
                                    {!priceCheckLoading && (
@@ -380,17 +380,21 @@ function Swap() {
                                         <p>Connect Wallet</p>
                                     </div>
                                 )}
-                                {address && (
-                                    tokenApprove?(
+                                {address && (hasGasfee ? (
+                                    tokenApprove ? (
                                         <div className="swap-card-wallet-connect-btn" onClick={onhandleSwap}>
-                                            <p>{ swapping ? "Swapping":"Swap"}</p>
+                                            <p>{swapping ? "Swapping" : "Swap"}</p>
                                         </div>
                                     ) : (
                                         <div className="swap-card-wallet-connect-btn" onClick={onhandleApprove}>
-                                            <p>{ approving ? "Approving":"Approve"}</p>
+                                            <p>{approving ? "Approving" : "Approve"}</p>
                                         </div>
                                     )
-                                )}
+                                ) : (
+                                    <div className="swap-card-wallet-connect-btn">
+                                        <p>Insufficient Balance</p>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </Grid>
