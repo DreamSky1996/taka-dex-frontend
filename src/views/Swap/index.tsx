@@ -392,7 +392,7 @@ function Swap() {
                                     )
                                 ) : (
                                     <div className="swap-card-wallet-connect-btn">
-                                        <p>Insufficient Balance</p>
+                                        <p>Insufficient BNB Balance</p>
                                     </div>
                                 ))}
                             </div>
